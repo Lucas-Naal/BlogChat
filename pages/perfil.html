@@ -8,15 +8,61 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
-    <div class="container">
-        <div class="card profile-card">
-            <img src="../img/profile-placeholder.jpg" class="card-img-top" alt="Avatar">
-            <div class="card-body">
-                <h5 class="card-title">Nombre de Usuario</h5>
-                <p class="card-text">Correo electrónico: usuario@example.com</p>
-                <p class="card-text">Ubicación: Ciudad, País</p>
-                <p class="card-text">Bio: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Editar Perfil</button>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Chat Blog</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Publicaciones</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a href="perfil.html">
+                            <span class="m-3 navbar-text" id="NombreDeUsuario"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-danger" id="cerrarSesion">Cerrar Sesión</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card profile-card">
+                    <img src="../img/profile-placeholder.jpg" id="profileImage" class="card-img-top" alt="Avatar">
+                    <div class="card-body">
+                        <h5 class="card-title" id="userName">Nombre de Usuario</h5>
+                        <p class="card-text" id="userEmail">Correo electrónico: usuario@example.com</p>
+                        <p class="card-text" id="userFechaCreacion">Fecha De Creación: </p>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">Editar Perfil</button>
+                        <button type="button" class="btn btn-danger" id="deleteAccount">Eliminar Cuenta</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h3>Mis Publicaciones</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Título</th>
+                            <th scope="col">Contenido</th>
+                            <th scope="col">Fecha de Publicación</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaPublicaciones">
+                        <!-- Aquí se cargarán las publicaciones -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -30,10 +76,13 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Aquí puedes agregar los campos para editar el perfil -->
-                    <form>
+                    <form id="editProfileForm">
                         <div class="mb-3">
-                            <label for="inputName" class="form-label">Nombre</label>
+                            <label for="inputProfileImage" class="form-label">URL de la Foto de Perfil</label>
+                            <input type="text" class="form-control" id="inputProfileImage">
+                        </div>
+                        <div class="mb-3">
+                            <label for="inputName" class="form-label">Nombre de Usuario</label>
                             <input type="text" class="form-control" id="inputName">
                         </div>
                         <div class="mb-3">
@@ -41,24 +90,132 @@
                             <input type="email" class="form-control" id="inputEmail">
                         </div>
                         <div class="mb-3">
-                            <label for="inputLocation" class="form-label">Ubicación</label>
-                            <input type="text" class="form-control" id="inputLocation">
-                        </div>
-                        <div class="mb-3">
-                            <label for="inputBio" class="form-label">Biografía</label>
-                            <textarea class="form-control" id="inputBio" rows="3"></textarea>
+                            <label for="inputPassword" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="inputPassword">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary">Guardar Cambios</button>
+                    <button type="button" class="btn btn-primary" id="saveProfileChanges">Guardar Cambios</button>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        async function obtenerPerfil() {
+            const usuarioId = localStorage.getItem('usuarioId');
+            
+            try {
+                const response = await fetch(`${API_URL}/api/ObtenerUsuario/${usuarioId}`);
+                const data = await response.json();
+
+                document.getElementById('profileImage').src = data.FotoDePerfil || '../img/profile-placeholder.jpg';
+                document.getElementById('userName').textContent = data.NombreDeUsuario;
+                document.getElementById('userEmail').textContent = `Correo electrónico: ${data.Email}`;
+                document.getElementById('userFechaCreacion').textContent = `Fecha De Creación: ${new Date(data.FechaDeCreacion).toLocaleDateString()}`;
+            } catch (error) {
+                console.error('Error al obtener el perfil:', error);
+            }
+        }
+
+        async function obtenerPublicacionesUsuario() {
+            const usuarioId = localStorage.getItem('usuarioId');
+
+            try {
+                const response = await fetch(`${API_URL}/api/ObtenerMisPublicaciones/${usuarioId}`);
+                const publicaciones = await response.json();
+
+                const tablaPublicaciones = document.getElementById('tablaPublicaciones');
+                tablaPublicaciones.innerHTML = '';
+
+                publicaciones.forEach((publicacion, index) => {
+                    const row = `
+                        <tr>
+                            <th scope="row">${index + 1}</th>
+                            <td>${publicacion.Titulo}</td>
+                            <td>${publicacion.Descripcion}</td>
+                            <td>${new Date(publicacion.FechaDePublicacion).toLocaleDateString()}</td>
+                        </tr>
+                    `;
+                    tablaPublicaciones.innerHTML += row;
+                });
+            } catch (error) {
+console.error('Error al obtener las publicaciones del usuario:', error);
+}
+}
+
+    document.getElementById('saveProfileChanges').addEventListener('click', async () => {
+            const usuarioId = localStorage.getItem('usuarioId');
+            const fotoDePerfil = document.getElementById('inputProfileImage').value;
+            const nombre = document.getElementById('inputName').value;
+            const email = document.getElementById('inputEmail').value;
+            const password = document.getElementById('inputPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/api/EditarInformacionUsuario/${usuarioId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ FotoDePerfil: fotoDePerfil, NombreDeUsuario: nombre, Email: email, PasswordHash: password })
+                });
+
+                if (response.ok) {
+                    obtenerPerfil();
+                    obtenerPublicacionesUsuario();
+                    $('#editProfileModal').modal('hide');
+                } else {
+                    console.error('Error al actualizar el perfil');
+                }
+            } catch (error) {
+                console.error('Error al actualizar el perfil:', error);
+            }
+        });
+
+        document.getElementById('deleteAccount').addEventListener('click', async () => {
+    const usuarioId = localStorage.getItem('usuarioId');
+
+    if (!confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/api/EliminarCuenta`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ID_Usuario: usuarioId })
+        });
+
+        if (response.ok) {
+            localStorage.removeItem('usuarioId');
+            window.location.href = '/pages/login.html'; 
+        } else {
+            console.error('Error al eliminar la cuenta');
+        }
+    } catch (error) {
+        console.error('Error al eliminar la cuenta:', error);
+    }
+});
+
+        document.getElementById('cerrarSesion').addEventListener('click', () => {
+            localStorage.removeItem('usuarioId');
+            localStorage.removeItem('NombreDeUsuario');
+            window.location.href = 'login.html';
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            obtenerPerfil();
+            obtenerPublicacionesUsuario(); 
+        });
+    </script>
 </body>
 </html>

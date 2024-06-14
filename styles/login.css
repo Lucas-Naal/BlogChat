@@ -7,3 +7,62 @@ body {
 .transparent-card {
     background-color: rgba(255, 255, 255, 0.8);
 }
+
+/* body {
+    background-color: #f0f0f0;
+} */
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+#loginForm {
+    max-width: 400px;
+    width: 100%;
+    /* background-color: #fff; */
+}
+
+#loginForm h2 {
+    color: #333;
+}
+
+.form-control {
+    border-color: #ced4da;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+.btn-link {
+    color: #007bff;
+}
+
+.btn-link:hover {
+    text-decoration: none;
+}
+
+.link-underline {
+    text-decoration: underline;
+}
+
+.link-underline-opacity-0 {
+    opacity: 0.6;
+}
+
+.text-muted {
+    color: #6c757d;
+}
+
+.shadow-lg {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}

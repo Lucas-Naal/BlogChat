@@ -1,75 +1,68 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página Principal</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="../styles/img_index.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
+
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark  bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Chat Blog</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Publicaciones</a>
+                        <a class="nav-link" href="index.html">Publicaciones</a>
                     </li>
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar">
-                    <button class="btn btn-outline-success" type="submit">Buscar</button>
-                </form>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a href="perfil.html">
+                            <span class="m-3 navbar-text" id="NombreDeUsuario"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-danger" id="cerrarSesion">Cerrar Sesión</button>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
-    
+
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-8">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Título de la Publicación</h5>
-                        <p class="card-text">Contenido de la publicación...</p>
-                        <a href="#" class="btn btn-primary">Leer más</a>
-                    </div>
-                    <div class="card-footer text-muted">
-                        Publicado por <a href="#">Usuario</a> el 10 de Junio de 2024
-                    </div>
-                </div>
-                
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Título de la Publicación</h5>
-                        <p class="card-text">Contenido de la publicación...</p>
-                        <a href="#" class="btn btn-primary">Leer más</a>
-                    </div>
-                    <div class="card-footer text-muted">
-                        Publicado por <a href="#">Usuario</a> el 10 de Junio de 2024
-                    </div>
+                <div id="publicaciones">
                 </div>
             </div>
-            
+
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">
                         Crear Publicación
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form id="formPublicacion">
                             <div class="mb-3">
                                 <label for="postTitle" class="form-label">Título</label>
-                                <input type="text" class="form-control" id="postTitle">
+                                <input type="text" class="form-control" id="postTitle" required>
                             </div>
                             <div class="mb-3">
                                 <label for="postContent" class="form-label">Contenido</label>
-                                <textarea class="form-control" id="postContent" rows="3"></textarea>
+                                <textarea class="form-control" id="postContent" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="postImage" class="form-label">Imagen (opcional)</label>
+                                <input type="file" class="form-control" id="postImage" accept="image/*">
                             </div>
                             <button type="submit" class="btn btn-primary">Publicar</button>
                         </form>
@@ -78,8 +71,248 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="editarComentarioModal" tabindex="-1" aria-labelledby="editarComentarioModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarComentarioModalLabel">Editar Comentario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form onsubmit="guardarCambiosComentario(event)">
+                        <div class="mb-3">
+                            <textarea class="form-control" id="editarComentario" rows="3" required></textarea>
+                        </div>
+                        <input type="hidden" id="comentarioId">
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        async function obtenerPublicaciones() {
+    try {
+        const response = await fetch(`${API_URL}/api/ObtenerPublicaciones`);
+        const publicaciones = await response.json();
+
+        const publicacionesDiv = document.getElementById('publicaciones');
+        publicacionesDiv.innerHTML = '';
+
+        publicaciones.forEach(publicacion => {
+            const imagenSrc = publicacion.Imagen ? `${API_URL}/${publicacion.Imagen.replace(/\\/g, '/')}` : null;
+const publicacionHtml = `
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+            <h5 class="card-title mb-0">${publicacion.Titulo}</h5>
+        </div>
+        <div class="card-body">
+            <p class="card-text">${publicacion.Descripcion}</p>
+            ${imagenSrc ? `<img src="${imagenSrc}" class="card-img-top img-fluid mt-3 rounded" alt="Imagen de la publicación">` : ''}
+        </div>
+        <div class="card-footer text-muted d-flex justify-content-between align-items-center">
+            <span>Publicado por <a href="#">${publicacion.NombreDeUsuario}</a></span>
+            <span>${new Date(publicacion.FechaDePublicacion).toLocaleDateString()}</span>
+        </div>
+        <div class="card-body">
+            <h6>Comentarios</h6>
+            <div id="comentarios-${publicacion.ID_Publicacion}" class="mb-3">
+                <!-- Comentarios se cargarán aquí -->
+            </div>
+            <form class="mt-3" onsubmit="agregarComentario(event, ${publicacion.ID_Publicacion})">
+                <div class="mb-3">
+                    <label for="comentario-${publicacion.ID_Publicacion}" class="form-label">Agregar comentario</label>
+                    <textarea class="form-control" id="comentario-${publicacion.ID_Publicacion}" rows="2" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Comentar</button>
+            </form>
+        </div>
+    </div>
+`;
+
+            publicacionesDiv.innerHTML += publicacionHtml;
+
+            obtenerComentarios(publicacion.ID_Publicacion);
+        });
+    } catch (error) {
+        console.error('Error al obtener las publicaciones:', error);
+    }
+}
+
+
+        async function obtenerComentarios(publicacionId) {
+            try {
+                const response = await fetch(`${API_URL}/api/ObtenerComentariosPorPublicacion/${publicacionId}`);
+                const comentarios = await response.json();
+
+                const comentariosDiv = document.getElementById(`comentarios-${publicacionId}`);
+                comentariosDiv.innerHTML = '';
+
+                comentarios.forEach(comentario => {
+                    const esAutor = comentario.ID_Usuario === parseInt(localStorage.getItem('usuarioId'));
+
+                    const comentarioHtml = `
+    <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+            <p class="card-text">${comentario.DescripcionDelComentario}</p>
+            ${esAutor ? `
+            <button type="button" class="btn btn-sm btn-outline-primary mt-2 editar-comentario" data-bs-toggle="modal" data-bs-target="#editarComentarioModal" onclick="prepararEdicionComentario(${comentario.ID_Comentarios}, '${comentario.DescripcionDelComentario}')">
+                <i class="bi bi-pencil-square"></i> Editar
+            </button>
+            ` : ''}
+        </div>
+        <div class="card-footer text-muted d-flex justify-content-between align-items-center">
+            <span>Comentado por <a href="#">${comentario.NombreDeUsuario}</a></span>
+            <span>${new Date(comentario.FechaDeCreacion).toLocaleDateString()}</span>
+        </div>
+    </div>
+`;
+
+                    comentariosDiv.innerHTML += comentarioHtml;
+                });
+            } catch (error) {
+                console.error('Error al obtener los comentarios:', error);
+            }
+        }
+
+        async function agregarComentario(event, publicacionId) {
+    event.preventDefault();
+
+    const descripcionDelComentario = document.getElementById(`comentario-${publicacionId}`).value;
+    const usuarioId = localStorage.getItem('usuarioId');
+
+    if (!usuarioId) {
+        alert('Usuario no autenticado');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/api/CrearComentario`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                DescripcionDelComentario: descripcionDelComentario,
+                ID_Usuario: usuarioId,
+                ID_Publicacion: publicacionId
+            })
+        });
+
+        if (response.ok) {
+            document.getElementById(`comentario-${publicacionId}`).value = '';
+            obtenerComentarios(publicacionId);
+        } else {
+            console.error('Error al crear el comentario');
+        }
+    } catch (error) {
+        console.error('Error al crear el comentario:', error);
+    }
+}
+
+        async function crearPublicacion(event) {
+            event.preventDefault();
+
+            const titulo = document.getElementById('postTitle').value;
+            const descripcion = document.getElementById('postContent').value;
+            const usuarioId = localStorage.getItem('usuarioId');
+            const imagen = document.getElementById('postImage').files[0]; 
+
+            if (!usuarioId) {
+                alert('Usuario no autenticado');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('ID_Usuario', usuarioId);
+                formData.append('Titulo', titulo);
+                formData.append('Descripcion', descripcion);
+                formData.append('Imagen', imagen); 
+
+                const response = await fetch(`${API_URL}/api/CrearPublicacion`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    obtenerPublicaciones();
+                    document.getElementById('postTitle').value = '';
+                    document.getElementById('postContent').value = '';
+                    document.getElementById('postImage').value = ''; 
+                } else {
+                    console.error('Error al crear la publicación');
+                }
+            } catch (error) {
+                console.error('Error al crear la publicación:', error);
+            }
+        }
+
+
+        function prepararEdicionComentario(comentarioId, contenidoComentario) {
+            document.getElementById('editarComentario').value = contenidoComentario;
+            document.getElementById('comentarioId').value = comentarioId;
+        }
+
+        async function guardarCambiosComentario(event) {
+            event.preventDefault();
+
+            const comentarioId = document.getElementById('comentarioId').value;
+            const nuevoContenido = document.getElementById('editarComentario').value;
+            const usuarioId = localStorage.getItem('usuarioId');
+
+            if (!usuarioId) {
+                alert('Usuario no autenticado');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/EditarComentario`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ID_Comentarios: comentarioId, DescripcionDelComentario: nuevoContenido, ID_Usuario: usuarioId })
+                });
+
+                if (response.ok) {
+                    $('#editarComentarioModal').modal('hide');
+                    obtenerComentarios();
+                } else {
+                    console.error('Error al editar el comentario');
+                }
+            } catch (error) {
+                console.error('Error al editar el comentario:', error);
+            }
+        }
+
+        function mostrarNombreUsuario() {
+            const NombreDeUsuario = localStorage.getItem('NombreDeUsuario');
+            if (NombreDeUsuario) {
+                document.getElementById('NombreDeUsuario').textContent = `${NombreDeUsuario}`;
+            }
+        }
+
+        document.getElementById('cerrarSesion').addEventListener('click', () => {
+            localStorage.removeItem('usuarioId');
+            localStorage.removeItem('NombreDeUsuario');
+            window.location.href = 'login.html';
+        });
+
+        document.getElementById('formPublicacion').addEventListener('submit', crearPublicacion);
+        document.addEventListener('DOMContentLoaded', () => {
+            obtenerPublicaciones();
+            mostrarNombreUsuario();
+        });
+    </script>
 </body>
+
 </html>

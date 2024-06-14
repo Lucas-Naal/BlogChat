@@ -9,16 +9,16 @@
 </head>
 <body>
     <div class="container d-flex align-items-center justify-content-center vh-100">
-        <form>
+        <form id="registerForm">
             <div class="transparent-card p-5 rounded">
                 <h2>Crear Cuenta</h2>
                 <div class="mb-3">
                     <label class="form-label">Nombre Completo</label>
-                    <input type="text" id="password" class="form-control">
+                    <input type="text" id="nombreCompleto" class="form-control">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Nombre de Usuario</label>
-                    <input type="text" id="password" class="form-control">
+                    <input type="text" id="nombreDeUsuario" class="form-control">
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Correo</label>
@@ -30,12 +30,12 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Confirmar Contraseña</label>
-                    <input type="password" id="password" class="form-control">
+                    <input type="password" id="confirmarPassword" class="form-control">
                 </div>
-                    <button type="button" class="btn btn-primary w-100">Crear Cuenta</button>
+                <button type="button" class="btn btn-primary w-100" id="registerButton">Crear Cuenta</button>
                 <div class="mt-3 d-flex justify-content-between">
                     <a href="#" class="btn btn-link link-underline link-underline-opacity-0">Olvidé mi contraseña</a>
-                    <a href="./login.html" class="btn btn-link link-underline link-underline-opacity-0">¿Ya tienes cuenta? Inicia Sesion</a>
+                    <a href="./login.html" class="btn btn-link link-underline link-underline-opacity-0">¿Ya tienes cuenta? Inicia Sesión</a>
                 </div>
             </div>
         </form>
@@ -43,5 +43,53 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <script>
+
+const API_URL = 'http://localhost:3000';
+
+        document.getElementById('registerButton').addEventListener('click', async () => {
+            const nombreCompleto = document.getElementById('nombreCompleto').value;
+            const nombreDeUsuario = document.getElementById('nombreDeUsuario').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmarPassword = document.getElementById('confirmarPassword').value;
+
+            if (!nombreCompleto || !nombreDeUsuario || !email || !password || !confirmarPassword) {
+                alert("Por favor, rellena todos los campos.");
+                return;
+            }
+
+            if (password !== confirmarPassword) {
+                alert("Las contraseñas no coinciden.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/Registro`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        FotoDePerfil: '', 
+                        NombreDeUsuario: nombreDeUsuario,
+                        PasswordHash: password,
+                        Email: email
+                    })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(`Registro exitoso. Bienvenido ${result.NombreDeUsuario}`);
+                    window.location.href = 'login.html';
+                } else {
+                    alert(result.msg || 'Error al registrar la cuenta');
+                }
+            } catch (error) {
+                console.error('Error al registrar la cuenta:', error);
+                alert('Error al registrar la cuenta');
+            }
+        });
+    </script>
 </body>
 </html>
